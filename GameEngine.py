@@ -58,7 +58,7 @@ if __name__ == '__main__':
     # register events
     engine.inputHandler.registerKeyDown(pygame.K_ESCAPE, engine.quit)
 
-    from sprites import Group, Balloon
+    from Entities import Balloon
     from Resources import ResourceLoader
     loader = ResourceLoader()
     b1 = Balloon(loader)
