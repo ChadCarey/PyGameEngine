@@ -32,6 +32,10 @@ class GameEngine(object):
         # create the clock
         self.clock = pytime.Clock()
 
+        # register the escape key
+        self.inputHandler.registerKeyDown(pygame.K_ESCAPE, self.quit)
+
+
     # event callbacks
     def quit(self, *args):
         self.game_exit = True
@@ -70,7 +74,6 @@ if __name__ == '__main__':
         print "They did not collide"
 
     engine.renderer.register(b1)
-
 
     engine.run()
     quit()

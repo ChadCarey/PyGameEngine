@@ -14,3 +14,5 @@ class World(object):
         self.entities.append(updatable)
     def removePhysics(self, updatable):
         self.entities.remove(updatable)
+    def register(self, ent):
+        self.entities.append(ent)

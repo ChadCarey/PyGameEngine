@@ -25,7 +25,8 @@ class ResourceLoader(object):
         loads the image only if it has not been loaded already
         '''
         if not self.image_exists(filename):
-            throw("Image does not exist in "+self.imageFolder+".")
+            print "Image does not exist in "+path.abspath(self.imageFolder)+"."
+            raise 1
         filepath = path.join(self.imageFolder, filename)
         if filepath in self._images:
             return self._images[filepath]
@@ -67,3 +68,37 @@ class ResourceLoader(object):
         '''
         filepath = path.join(self.maskFolder, filename)
         pygame.image.save(mask, filepath)
+
+class SpriteSheet(object):
+    def __init__(self, sheet, imageDict, colorkey=False):
+        data = self._images_from(sheet, imageDict, colorkey)
+        self.__dict__.update(data)
+
+    # Load a specific image from a specific rectangle
+    def _image_at(self, sheet, rectangle, colorkey = None):
+        "Loads image from x,y,x+offset,y+offset"
+        rect = pygame.Rect(rectangle)
+        # new surface of rectange size
+        image = pygame.Surface(rect.size).convert()
+        # blit sheet at rect onto new image
+        image.blit(sheet, (0, 0), rect)
+        if colorkey is not None:
+            if colorkey is -1:
+                colorkey = image.get_at((0,0))
+            image.set_colorkey(colorkey, pygame.RLEACCEL)
+        return image
+    # Load a whole bunch of images and return them as a list
+    def _images_at(self, sheet, rects, colorkey = None):
+        "Loads multiple images, supply a list of coordinates" 
+        return [self._image_at(sheet, rect, colorkey) for rect in rects]
+    # Load a whole strip of images
+    def _load_strip(self, rect, image_count, colorkey = None):
+        "Loads a strip of images and returns them as a list"
+        tups = [(rect[0]+rect[2]*x, rect[1], rect[2], rect[3])
+                for x in range(image_count)]
+        return self._images_at(tups, colorkey)
+    def _images_from(self, sheet, layout_dict, colorkey=None):
+        images = {}
+        for k, rect in layout_dict.iteritems():
+            images[k] = self._image_at(sheet, rect, colorkey)
+        return images
